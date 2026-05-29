@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Siswa - MathVenture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-950 text-white">
+    <div id="view-setup" class="p-10 max-w-md mx-auto">
+        <h1 class="text-3xl font-bold mb-5 text-center">MATHVENTURE</h1>
+        <form id="login-form" class="space-y-4">
+            <input type="text" id="name" placeholder="Nama Lengkap" class="w-full p-3 bg-slate-900 rounded border border-slate-700">
+            <input type="number" id="absen" placeholder="No Absen" class="w-full p-3 bg-slate-900 rounded border border-slate-700">
+            <button type="submit" class="w-full bg-indigo-600 p-3 rounded font-bold">MASUK LOBBY</button>
+        </form>
+    </div>
+
+    <div id="view-game" class="hidden flex flex-col lg:flex-row h-screen">
+        <div id="map-wrapper" class="m-5">
+            <svg id="svg-overlay" viewBox="0 0 1000 1000"></svg>
+        </div>
+        
+        <div id="quiz-container" class="flex-grow p-10 bg-slate-900">
+            <div id="question-box" class="bg-slate-800 p-6 rounded-xl">
+                </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/siswa.js"></script>
+</body>
+</html>
