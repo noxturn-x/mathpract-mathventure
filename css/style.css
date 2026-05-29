@@ -1,36 +1,37 @@
-body {
-    font-family: 'Trebuchet MS', sans-serif;
-}
+:root { --indigo-primary: #4f46e5; }
+body { font-family: 'Trebuchet MS', sans-serif; overflow-x: hidden; }
 
-/* Container Peta */
-#map-wrapper {
+/* MAP CONTAINER */
+.map-container {
     position: relative;
     width: 100%;
-    max-width: 900px;
-    aspect-ratio: 1 / 1;
+    max-width: 800px;
+    aspect-ratio: 1/1;
     margin: 0 auto;
-    /* ASSET PLACEHOLDER: Ganti map.svg dengan file desain peta Anda nanti */
-    background-image: url('../assets/images/map.svg');
-    background-size: cover;
-    background-position: center;
-    border: 4px solid #312e81;
-    border-radius: 50%; /* Sesuai konsep radial */
-    background-color: #0f172a;
+    /* ASSET: Ganti map.svg dengan desain peta radial Anda */
+    background: url('../assets/images/map.svg') center/cover no-repeat;
+    border: 5px solid #1e1b4b;
+    border-radius: 50%;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
 }
 
-#svg-overlay {
+.map-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none;
 }
 
-/* Animasi Avatar */
-.player-token {
-    transition: all 0.5s ease-in-out;
+/* FREEZE EFFECT */
+#freeze-overlay {
+    background: rgba(15, 23, 42, 0.9);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
 }
 
-/* Gaya matematika KaTeX */
-.katex { font-size: 1.2em !important; }
+.frozen { pointer-events: none; filter: grayscale(1); }
+
+/* MATH RENDERING */
+.katex { font-size: 1.1em; }

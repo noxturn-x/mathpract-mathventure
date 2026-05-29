@@ -2,24 +2,35 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Guru - MathVenture</title>
+    <title>MathVenture - Control Panel Guru</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-slate-950 text-white p-10">
-    <div class="flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-bold">Control Panel Guru</h1>
-        <button id="start-btn" class="bg-green-600 px-6 py-2 rounded font-bold">MULAI PERMAINAN</button>
+<body class="bg-slate-950 text-white p-8">
+    <div class="flex justify-between items-start mb-8">
+        <div>
+            <h1 class="text-3xl font-black text-indigo-500">GURU CONTROL PANEL</h1>
+            <p class="text-slate-400 font-mono">Room ID: kelas_8a_2026</p>
+        </div>
+        <div class="flex gap-3">
+            <button id="btn-start" class="bg-emerald-600 px-8 py-3 rounded-xl font-black hover:bg-emerald-500 transition">START GAME</button>
+            <button id="btn-stop" class="bg-rose-600 px-8 py-3 rounded-xl font-black hover:bg-rose-500 transition">STOP DARURAT</button>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div id="map-wrapper">
-            <svg id="svg-overlay" viewBox="0 0 1000 1000"></svg>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="map-container">
+                <svg id="map-svg" viewBox="0 0 1000 1000" class="map-overlay">
+                    </svg>
+            </div>
         </div>
-        
-        <div class="bg-slate-900 p-5 rounded-xl">
-            <h2 class="text-xl mb-4">Leaderboard Kelompok</h2>
-            <div id="leaderboard">
+
+        <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 h-[600px] overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4 flex justify-between">
+                Lobby Siswa <span id="count-player" class="text-indigo-400">0</span>
+            </h2>
+            <div id="player-list-guru" class="space-y-2">
                 </div>
         </div>
     </div>

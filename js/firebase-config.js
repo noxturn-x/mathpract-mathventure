@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzi8YvyOMmbiAs6VQs3-XBnWoJISJ4mC0",
@@ -13,9 +12,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const activeRoomId = 'kelas_8a_2026';
-
-// Menjamin user login secara anonim agar bisa baca/tulis Firestore
-signInAnonymously(auth).catch(err => console.error("Firebase Auth Error:", err));
+export const ROOM_REF = doc(db, "rooms", activeRoomId);
+export const PLAYERS_COL = collection(db, "players");
+export const TEAMS_COL = collection(db, "teams");
