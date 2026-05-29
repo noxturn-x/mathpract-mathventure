@@ -8,27 +8,34 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-950 text-white">
+
     <div id="view-setup" class="p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center">
         <h1 class="text-3xl font-black text-center mb-8 text-indigo-500">MATHVENTURE</h1>
         <div class="space-y-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
-            <input type="text" id="in-nama" placeholder="Nama Lengkap" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl outline-none focus:border-indigo-500">
-            <input type="number" id="in-absen" placeholder="No Absen" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl outline-none focus:border-indigo-500">
+            <input type="text" id="in-nama" placeholder="Nama Lengkap" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-white">
+            <input type="number" id="in-absen" placeholder="No Absen" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl outline-none focus:border-indigo-500 text-white">
             
             <p class="text-xs font-bold text-slate-500 uppercase mt-4">Pilih Karakter</p>
             <div class="grid grid-cols-4 gap-2" id="char-selector">
-                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center" data-char="A">⚔️</div>
-                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center" data-char="B">🔮</div>
-                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center" data-char="C">🏹</div>
-                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center" data-char="D">🌿</div>
+                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center text-2xl hover:bg-slate-800 transition" data-char="Warrior">⚔️</div>
+                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center text-2xl hover:bg-slate-800 transition" data-char="Mage">🔮</div>
+                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center text-2xl hover:bg-slate-800 transition" data-char="Archer">🏹</div>
+                <div class="char-opt cursor-pointer p-2 border border-slate-800 rounded-lg text-center text-2xl hover:bg-slate-800 transition" data-char="Healer">🌿</div>
             </div>
-            <button id="btn-join" class="w-full bg-indigo-600 py-4 rounded-xl font-black text-lg hover:bg-indigo-500 transition shadow-lg">GABUNG LOBBY</button>
+            <button id="btn-join" class="w-full bg-indigo-600 py-4 rounded-xl font-black text-lg hover:bg-indigo-500 transition shadow-lg mt-4">GABUNG LOBBY</button>
         </div>
+    </div>
+
+    <div id="view-lobby" class="hidden p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center text-center">
+        <div class="w-16 h-16 border-4 border-t-indigo-500 border-indigo-900 rounded-full animate-spin mx-auto mb-6"></div>
+        <h2 class="text-2xl font-bold text-white mb-2">Menunggu Gerbang Dibuka...</h2>
+        <p class="text-slate-400 text-sm">Identitas berhasil dikunci. Mohon tunggu instruksi Guru untuk memulai pembagian kelompok otomatis.</p>
     </div>
 
     <div id="view-game" class="hidden flex flex-col h-screen">
         <div class="bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center">
             <div class="flex flex-col">
-                <span id="display-team" class="text-indigo-400 font-bold text-xs uppercase">Mencari Tim...</span>
+                <span id="display-team" class="text-indigo-400 font-bold text-xs uppercase tracking-wider">Mencari Tim...</span>
                 <span id="display-stage" class="text-white font-black text-lg">Stage 0/20</span>
             </div>
             <div class="bg-amber-900/30 px-3 py-1 rounded-full border border-amber-700/50">
@@ -36,27 +43,25 @@
             </div>
         </div>
 
-        <div id="quiz-container" class="flex-grow p-5 flex flex-col justify-center">
-            <div id="freeze-overlay" class="absolute inset-0 rounded-2xl hidden">
-                <h2 class="text-2xl font-bold text-rose-500">PENALTI SALAH!</h2>
-                <p class="text-white">Gerbang terkunci selama <span id="freeze-timer" class="font-bold">5</span>s</p>
+        <div id="quiz-container" class="flex-grow p-5 flex flex-col justify-center relative">
+            <div id="freeze-overlay" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center rounded-2xl z-50 hidden">
+                <h2 class="text-2xl font-bold text-rose-500 tracking-wide mb-1">PENALTI SALAH!</h2>
+                <p class="text-slate-300">Gerbang terkunci selama <span id="freeze-timer" class="font-mono font-bold text-white text-xl">5</span> detik</p>
             </div>
 
-            <div id="question-card" class="bg-slate-900 p-6 rounded-3xl border border-indigo-500/20 shadow-2xl">
-                <p id="q-text" class="text-xl font-medium mb-6 leading-relaxed">Menunggu Guru memulai permainan...</p>
+            <div id="question-card" class="bg-slate-900 p-6 rounded-3xl border border-indigo-500/10 shadow-2xl max-w-xl mx-auto w-full">
+                <p id="q-text" class="text-xl font-medium mb-6 leading-relaxed text-slate-200">Menunggu sinyal pertempuran dari Guru...</p>
                 <div id="options-grid" class="grid grid-cols-1 gap-3"></div>
                 <button id="btn-hint" class="mt-6 text-indigo-400 text-sm font-bold underline hidden">Beli Petunjuk (-10 Poin)</button>
             </div>
         </div>
-
-        <div id="teammate-bar" class="p-4 bg-slate-950 flex gap-2 overflow-x-auto border-t border-slate-900">
-            </div>
     </div>
 
     <div id="view-finish" class="hidden p-8 text-center min-h-screen flex flex-col justify-center bg-indigo-950">
-        <h1 class="text-5xl mb-4">🏆</h1>
-        <h2 class="text-3xl font-black mb-2 text-amber-400 underline">PERMAINAN SELESAI</h2>
-        <div id="ranking-list" class="space-y-4 mt-8 text-left"></div>
+        <h1 class="text-6xl mb-4">🏆</h1>
+        <h2 class="text-3xl font-black mb-2 text-amber-400">PERMAINAN SELESAI</h2>
+        <p class="text-slate-300 text-sm mb-6">Seluruh tim telah mencapai titik pusat koordinat Aljabar.</p>
+        <div id="ranking-list" class="space-y-4 max-w-md mx-auto w-full text-left"></div>
     </div>
 
     <script type="module" src="js/siswa.js"></script>
