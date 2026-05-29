@@ -4,6 +4,19 @@ import { onSnapshot, updateDoc, writeBatch, doc, setDoc } from "https://www.gsta
 let allPlayers = [];
 let allTeams = [];
 
+import { db, TEAMS_COL, PLAYERS_COL, ROOM_REF } from './firebase-config.js';
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { drawFullMap } from './map-renderer.js';
+
+const svg = document.getElementById('map-svg');
+
+onSnapshot(TEAMS_COL, (snap) => {
+    const teams = snap.docs.map(d => d.data());
+    // GAMBAR ULANG PETA SETIAP ADA PERUBAHAN PROGRESS TIM
+    if(teams.length > 0) {
+        drawFullMap(svg, teams);
+    }
+});
 // =========================================================================
 // SOLUSI ERROR: Inisialisasi Kamar Otomatis Saat Layar Guru Dibuka
 // =========================================================================
