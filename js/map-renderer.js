@@ -1,10 +1,8 @@
 export function getCoordinates(angle, stage, totalStages = 20) {
-    const cx = 500; // Titik pusat X (berdasarkan viewBox 0-1000)
-    const cy = 500; // Titik pusat Y
-    const maxRadius = 430; // Mulai dari pinggir
-    const minRadius = 60;  // Berakhir di pusat (Istana)
-
-    // Semakin tinggi stage, radius semakin kecil (mendekat ke pusat)
+    const cx = 500; 
+    const cy = 500;
+    const maxRadius = 400; 
+    const minRadius = 50;  
     const currentRadius = maxRadius - (stage / totalStages) * (maxRadius - minRadius);
     const angleRad = (angle * Math.PI) / 180;
 
@@ -14,19 +12,26 @@ export function getCoordinates(angle, stage, totalStages = 20) {
     };
 }
 
-export function drawPath(svgElement, angle, teamColor) {
-    let points = "";
-    for (let i = 0; i <= 20; i++) {
-        const { x, y } = getCoordinates(angle, i);
-        points += `${x},${y} `;
-    }
+export function drawFullMap(svgElement, teams) {
+    svgElement.innerHTML = ''; // Bersihkan peta
+    
+    // Gambar Pusat (Goal)
+    const goal = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    goal.setAttribute("cx", "500"); goal.setAttribute("cy", "500"); goal.setAttribute("r", "40");
+    goal.setAttribute("fill", "#fbbf24");
+    svgElement.appendChild(goal);
 
-    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    polyline.setAttribute("points", points);
-    polyline.setAttribute("stroke", teamColor);
-    polyline.setAttribute("stroke-width", "3");
-    polyline.setAttribute("fill", "none");
-    polyline.setAttribute("stroke-opacity", "0.2");
-    polyline.setAttribute("stroke-dasharray", "8,4");
-    svgElement.appendChild(polyline);
+    teams.forEach(team => {
+        const color = "#4f46e5";
+        // Gambar Jalur dan Titik
+        for (let i = 0; i <= 20; i++) {
+            const { x, y } = getCoordinates(team.angle || 0, i);
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", x);
+            dot.setAttribute("cy", y);
+            dot.setAttribute("r", i <= team.group_stage ? "8" : "4");
+            dot.setAttribute("fill", i <= team.group_stage ? "#fbbf24" : "#334155");
+            svgElement.appendChild(dot);
+        }
+    });
 }
