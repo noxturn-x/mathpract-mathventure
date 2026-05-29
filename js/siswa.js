@@ -1,77 +1,100 @@
-import { db, ROOM_REF, PLAYERS_COL, TEAMS_COL } from './firebase-config.js';
+import { db, ROOM_REF, PLAYERS_COL } from './firebase-config.js';
 import { onSnapshot, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 let myId = localStorage.getItem('math_player_id') || "p_" + Date.now();
 let myData = null;
 let isFrozen = false;
+let bankSoal = []; // Tempat menyimpan paket 20 soal
 
-// 1. Join Game
+async function loadQuestions() {
+    const res = await fetch('data/soal.json');
+    const data = await res.json();
+    // Ambil 5 soal acak dari tiap tipe (A, B, C, D)
+    const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
+    bankSoal = [
+        ...shuffle(data.tipe_A).slice(0, 5),
+        ...shuffle(data.tipe_B).slice(0, 5),
+        ...shuffle(data.tipe_C).slice(0, 5),
+        ...shuffle(data.tipe_D).slice(0, 5)
+    ];
+}
+
 document.getElementById('btn-join').addEventListener('click', async () => {
     const nama = document.getElementById('in-nama').value;
     const absen = document.getElementById('in-absen').value;
-    if(!nama) return;
+    const karakter = document.querySelector('.char-opt.border-indigo-500')?.dataset.char || "A";
+    
+    if(!nama || !absen) return alert("Isi nama dan absen!");
 
+    await loadQuestions();
     localStorage.setItem('math_player_id', myId);
     await setDoc(doc(db, "players", myId), {
-        nama, absen, current_stage: 0, team_id: "", koin: 0
+        nama, absen, karakter, current_stage: 0, team_id: "", koin: 0
     });
-    initGameplay();
+    
+    initSiswaLoop();
 });
 
-// 2. Gameplay Loop
-function initGameplay() {
+function initSiswaLoop() {
     document.getElementById('view-setup').classList.add('hidden');
-    document.getElementById('view-game').classList.remove('hidden');
+    document.getElementById('view-lobby').classList.remove('hidden');
 
+    // Cek Status Room (Jika guru Start)
+    onSnapshot(ROOM_REF, (snap) => {
+        const room = snap.data();
+        if(room.status === 'playing') {
+            document.getElementById('view-lobby').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+        }
+    });
+
+    // Cek Data Diri Sendiri
     onSnapshot(doc(db, "players", myId), (snap) => {
         myData = snap.data();
-        document.getElementById('display-stage').innerText = `Stage ${myData.current_stage}/20`;
-        document.getElementById('display-coin').innerText = `💰 ${myData.koin}`;
-        loadQuestion(myData.current_stage);
-    });
-
-    onSnapshot(ROOM_REF, (snap) => {
-        if(snap.data().status === 'finished') switchView('view-finish');
+        renderQuestion(myData.current_stage);
     });
 }
 
-// 3. Freeze Penalty Logic (Saran 2 Terintegrasi)
-async function handleAnswer(selected, correct) {
-    if (isFrozen) return;
-
-    if (selected === correct) {
-        await updateDoc(doc(db, "players", myId), { 
-            current_stage: myData.current_stage + 1,
-            koin: myData.koin + 10 
-        });
-    } else {
-        triggerFreeze();
+function renderQuestion(stage) {
+    if (stage >= 20) {
+        document.getElementById('q-text').innerText = "Kamu sudah sampai di Pusat! Tunggu temanmu.";
+        document.getElementById('options-grid').innerHTML = "";
+        return;
     }
+    const soal = bankSoal[stage];
+    document.getElementById('q-text').innerText = soal.pertanyaan;
+    document.getElementById('display-stage').innerText = `Stage ${stage}/20`;
+    
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = "";
+    soal.pilihan.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "p-3 bg-slate-800 rounded-xl hover:bg-indigo-600 transition";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (isFrozen) return;
+            if (opt === soal.jawaban_benar) {
+                updateDoc(doc(db, "players", myId), { current_stage: stage + 1 });
+            } else {
+                startFreeze();
+            }
+        };
+        grid.appendChild(btn);
+    });
 }
 
-function triggerFreeze() {
+function startFreeze() {
     isFrozen = true;
+    let time = 5;
     const overlay = document.getElementById('freeze-overlay');
-    const timerText = document.getElementById('freeze-timer');
-    let timeLeft = 5;
-
     overlay.style.display = 'flex';
-    document.getElementById('options-grid').classList.add('frozen');
-
-    const interval = setInterval(() => {
-        timeLeft--;
-        timerText.innerText = timeLeft;
-        if(timeLeft <= 0) {
-            clearInterval(interval);
+    const timer = setInterval(() => {
+        time--;
+        document.getElementById('freeze-timer').innerText = time;
+        if(time <= 0) {
+            clearInterval(timer);
             isFrozen = false;
             overlay.style.display = 'none';
-            document.getElementById('options-grid').classList.remove('frozen');
         }
     }, 1000);
-}
-
-function loadQuestion(stage) {
-    // Logika mengambil soal dari soal.json berdasarkan index stage
-    // Tampilkan di #q-text dan #options-grid
-    // Setiap tombol opsi panggil handleAnswer(dipilih, benar)
 }
